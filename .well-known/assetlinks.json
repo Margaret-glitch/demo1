@@ -2,7 +2,7 @@
       "relation": ["delegate_permission/common.handle_all_urls"],
       "target": {
         "namespace": "android_app",
-        "package_name": "ng.name.breacher.pwa",
-        "sha256_cert_fingerprints": ["99:BC:06:8F:98:90:42:D1:9B:E6:69:64:84:EF:73:D4:81:25:5F:8E:F6:4B:EF:93:A8:49:96:84:1B:63:C9:45"]
+        "package_name": "ng.name.maggie.pwa",
+        "sha256_cert_fingerprints": ["97:5A:54:57:56:FB:57:8C:9B:3B:BB:36:0D:2A:2F:F1:FB:50:64:13:C8:07:92:83:EA:AE:49:B3:FE:96:DA:21"]
       }
     }]
