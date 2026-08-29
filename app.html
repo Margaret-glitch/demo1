@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduRise - Learn Anytime</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-canvas: #f4f5f8;
+            --card-bg: #ffffff;
+            --primary: #7c3aed;
+        }
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #e2e8f0;
+            color: #1e293b;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* App Container constrained for desktop web view, 100% on mobile */
+        .mobile-shell {
+            max-width: 430px;
+            margin: 0 auto;
+            background-color: var(--bg-canvas);
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: 96px;
+        }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Touch & Mouse Drag Slider Styling */
+        .snap-carousel {
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .snap-card {
+            scroll-snap-align: start;
+        }
+        .draggable-carousel {
+            cursor: grab;
+        }
+        .draggable-carousel:active {
+            cursor: grabbing;
+        }
+
+        /* Smooth Reveal & Blur Animation */
+        .reveal-item {
+            opacity: 0;
+            filter: blur(4px);
+            transform: translateY(16px);
+            transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+        }
+        .reveal-item.is-visible {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+
+        /* Glass Overlay for teacher badges */
+        .glass-badge {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="mobile-shell border-x border-slate-200/60 overflow-hidden">
+        
+        <!-- Top App Header -->
+        <header class="flex justify-between items-center px-3.5 pt-4 pb-2 reveal-item">
+            <div class="flex items-center gap-2.5">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Alex Rivera" class="w-9 h-9 rounded-full object-cover ring-2 ring-purple-500/20">
+                <div>
+                    <span class="text-[11px] font-semibold text-slate-400 leading-none block">Welcome To</span>
+                    <h1 class="font-extrabold text-base text-slate-900 leading-tight">EduRise</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button aria-label="Search" class="w-9 h-9 bg-white border border-slate-200/80 rounded-xl flex items-center justify-center text-slate-700 active:scale-95 transition-transform">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </button>
+                <button aria-label="Notifications" class="w-9 h-9 bg-white border border-slate-200/80 rounded-xl flex items-center justify-center text-slate-700 active:scale-95 transition-transform relative">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Banner Section -->
+        <section class="px-3.5 mt-2 reveal-item">
+            <div class="relative bg-gradient-to-br from-violet-600 to-indigo-700 rounded-2xl p-5 h-[165px] overflow-hidden flex flex-col justify-between">
+                <div class="relative z-10 max-w-[65%]">
+                    <h2 class="text-white text-xl font-bold leading-tight tracking-tight">Learn Anytime<br>Anywhere!</h2>
+                </div>
+                
+                <!-- Hero Decorative Image -->
+                <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=400&q=80" alt="Student studying" class="absolute right-0 bottom-0 h-[110%] object-cover object-top" style="mask-image: linear-gradient(to right, transparent 0%, black 35%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%);">
+                
+                <!-- Action Button -->
+                <button aria-label="Explore Banner" class="w-9 h-9 bg-white rounded-xl flex items-center justify-center active:scale-95 transition-transform z-10 border border-white/20">
+                    <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-900"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Horizontal Category Pill Selector -->
+        <section class="mt-4 pl-3.5 reveal-item">
+            <div id="categoryContainer" class="flex gap-2 overflow-x-auto no-scrollbar pr-3.5 py-1">
+                <button class="cat-pill min-w-[42px] h-[42px] bg-slate-900 text-white rounded-xl flex items-center justify-center flex-shrink-0 active:scale-95 transition-all">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                </button>
+                <button class="cat-pill px-3.5 h-[42px] bg-white border border-slate-200/80 rounded-xl flex items-center justify-center flex-shrink-0 font-semibold text-xs text-slate-700 gap-1.5 active:scale-95 transition-all">
+                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-purple-600"></i>
+                    Academic
+                </button>
+                <button class="cat-pill px-3.5 h-[42px] bg-white border border-slate-200/80 rounded-xl flex items-center justify-center flex-shrink-0 font-semibold text-xs text-slate-700 gap-1.5 active:scale-95 transition-all">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-slate-400"></i>
+                    Test Prep
+                </button>
+                <button class="cat-pill px-3.5 h-[42px] bg-white border border-slate-200/80 rounded-xl flex items-center justify-center flex-shrink-0 font-semibold text-xs text-slate-700 gap-1.5 active:scale-95 transition-all">
+                    <i data-lucide="palette" class="w-3.5 h-3.5 text-slate-400"></i>
+                    UI/UX Design
+                </button>
+                <button class="cat-pill px-3.5 h-[42px] bg-white border border-slate-200/80 rounded-xl flex items-center justify-center flex-shrink-0 font-semibold text-xs text-slate-700 gap-1.5 active:scale-95 transition-all">
+                    <i data-lucide="code" class="w-3.5 h-3.5 text-slate-400"></i>
+                    Development
+                </button>
+            </div>
+        </section>
+
+        <!-- Featured Courses Carousel -->
+        <section class="mt-5 reveal-item">
+            <div class="flex justify-between items-center px-3.5 mb-2.5">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider text-[11px]">Featured Courses</h3>
+                <span class="text-[11px] font-semibold text-slate-400">Swipe &bull;</span>
+            </div>
+            
+            <!-- Carousel Container -->
+            <div id="featuredCarousel" class="flex gap-3 overflow-x-auto no-scrollbar snap-carousel draggable-carousel pl-3.5 pr-3.5 pb-2">
+                <!-- Course Card 1 -->
+                <div class="snap-card relative min-w-[240px] max-w-[240px] h-[160px] rounded-xl overflow-hidden flex-shrink-0 border border-slate-200/60 group">
+                    <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=600&q=80" alt="Design Course" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                    
+                    <div class="absolute top-2.5 right-2.5 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full">
+                        <span class="text-[11px] font-bold text-white">$49.99</span>
+                    </div>
+                    
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <span class="text-[10px] uppercase font-bold text-purple-300 tracking-wider">Design</span>
+                        <h4 class="text-white font-bold text-sm leading-tight mt-0.5">Design for Beginners</h4>
+                    </div>
+                </div>
+
+                <!-- Course Card 2 -->
+                <div class="snap-card relative min-w-[240px] max-w-[240px] h-[160px] rounded-xl overflow-hidden flex-shrink-0 border border-slate-200/60 group">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80" alt="Marketing Course" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                    
+                    <div class="absolute top-2.5 right-2.5 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full">
+                        <span class="text-[11px] font-bold text-white">$39.99</span>
+                    </div>
+                    
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <span class="text-[10px] uppercase font-bold text-emerald-300 tracking-wider">Business</span>
+                        <h4 class="text-white font-bold text-sm leading-tight mt-0.5">Digital Marketing 2026</h4>
+                    </div>
+                </div>
+
+                <!-- Course Card 3 -->
+                <div class="snap-card relative min-w-[240px] max-w-[240px] h-[160px] rounded-xl overflow-hidden flex-shrink-0 border border-slate-200/60 group">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=600&q=80" alt="Python Development" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                    
+                    <div class="absolute top-2.5 right-2.5 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full">
+                        <span class="text-[11px] font-bold text-white">$59.99</span>
+                    </div>
+                    
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <span class="text-[10px] uppercase font-bold text-amber-300 tracking-wider">Coding</span>
+                        <h4 class="text-white font-bold text-sm leading-tight mt-0.5">Python & AI Principles</h4>
+                    </div>
+                </div>
+
+                <!-- Course Card 4 -->
+                <div class="snap-card relative min-w-[240px] max-w-[240px] h-[160px] rounded-xl overflow-hidden flex-shrink-0 border border-slate-200/60 group">
+                    <img src="https://images.unsplash.com/photo-1542744094-3a31216994a0?auto=format&fit=crop&w=600&q=80" alt="Productivity" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
+                    
+                    <div class="absolute top-2.5 right-2.5 bg-black/40 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full">
+                        <span class="text-[11px] font-bold text-white">$29.99</span>
+                    </div>
+                    
+                    <div class="absolute bottom-3 left-3 right-3">
+                        <span class="text-[10px] uppercase font-bold text-sky-300 tracking-wider">Management</span>
+                        <h4 class="text-white font-bold text-sm leading-tight mt-0.5">Agile & Scrum Workflow</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Functional Interactive Pagination Indicators -->
+            <div id="carouselDots" class="flex justify-center items-center gap-1.5 mt-2">
+                <button data-index="0" class="dot-btn h-1.5 rounded-full bg-purple-600 w-5 transition-all duration-300" aria-label="Go to slide 1"></button>
+                <button data-index="1" class="dot-btn h-1.5 rounded-full bg-slate-300 w-1.5 transition-all duration-300" aria-label="Go to slide 2"></button>
+                <button data-index="2" class="dot-btn h-1.5 rounded-full bg-slate-300 w-1.5 transition-all duration-300" aria-label="Go to slide 3"></button>
+                <button data-index="3" class="dot-btn h-1.5 rounded-full bg-slate-300 w-1.5 transition-all duration-300" aria-label="Go to slide 4"></button>
+            </div>
+        </section>
+
+        <!-- Best Expert Teachers Section -->
+        <section class="mt-6 px-3.5 reveal-item">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider text-[11px]">Best Expert Teachers</h3>
+                <a href="#" class="text-[11px] font-bold text-purple-600 hover:text-purple-700 transition-colors">Show More</a>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5">
+                <!-- Teacher 1 -->
+                <div class="relative h-[175px] rounded-xl overflow-hidden border border-slate-200/60 bg-white group">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Ms. Jessica" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    
+                    <div class="absolute bottom-2 left-2 right-2 glass-badge rounded-lg p-2 flex justify-between items-center border border-white/10">
+                        <div class="min-w-0 pr-1">
+                            <h4 class="text-white font-bold text-xs truncate leading-tight">Ms. Jessica</h4>
+                            <p class="text-slate-300 text-[10px] truncate">UI/UX Designer</p>
+                        </div>
+                        <button aria-label="View Profile" class="w-6 h-6 bg-white rounded-md flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-purple-700"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Teacher 2 -->
+                <div class="relative h-[175px] rounded-xl overflow-hidden border border-slate-200/60 bg-white group">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Mr. Ethan" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    
+                    <div class="absolute bottom-2 left-2 right-2 glass-badge rounded-lg p-2 flex justify-between items-center border border-white/10">
+                        <div class="min-w-0 pr-1">
+                            <h4 class="text-white font-bold text-xs truncate leading-tight">Mr. Ethan</h4>
+                            <p class="text-slate-300 text-[10px] truncate">Finance Coach</p>
+                        </div>
+                        <button aria-label="View Profile" class="w-6 h-6 bg-white rounded-md flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-purple-700"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Teacher 3 -->
+                <div class="relative h-[175px] rounded-xl overflow-hidden border border-slate-200/60 bg-white group">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Mr. David" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    
+                    <div class="absolute bottom-2 left-2 right-2 glass-badge rounded-lg p-2 flex justify-between items-center border border-white/10">
+                        <div class="min-w-0 pr-1">
+                            <h4 class="text-white font-bold text-xs truncate leading-tight">Mr. David</h4>
+                            <p class="text-slate-300 text-[10px] truncate">Motion Artist</p>
+                        </div>
+                        <button aria-label="View Profile" class="w-6 h-6 bg-white rounded-md flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-purple-700"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Teacher 4 -->
+                <div class="relative h-[175px] rounded-xl overflow-hidden border border-slate-200/60 bg-white group">
+                    <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80" alt="Ms. Sofia" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    
+                    <div class="absolute bottom-2 left-2 right-2 glass-badge rounded-lg p-2 flex justify-between items-center border border-white/10">
+                        <div class="min-w-0 pr-1">
+                            <h4 class="text-white font-bold text-xs truncate leading-tight">Ms. Sofia</h4>
+                            <p class="text-slate-300 text-[10px] truncate">English Tutor</p>
+                        </div>
+                        <button aria-label="View Profile" class="w-6 h-6 bg-white rounded-md flex items-center justify-center flex-shrink-0 active:scale-95 transition-transform">
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-purple-700"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommended For You Section -->
+        <section class="mt-6 reveal-item">
+            <div class="flex justify-between items-center px-3.5 mb-2.5">
+                <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wider text-[11px]">Recommended For You</h3>
+            </div>
+            
+            <div class="flex gap-3 overflow-x-auto no-scrollbar snap-carousel draggable-carousel pl-3.5 pr-3.5">
+                <!-- Rec Card 1 -->
+                <div class="snap-card w-[210px] flex-shrink-0 bg-white rounded-xl border border-slate-200/60 p-2">
+                    <div class="h-[110px] rounded-lg overflow-hidden mb-2">
+                        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500&q=80" alt="Mastering UI" class="w-full h-full object-cover">
+                    </div>
+                    <div class="px-1">
+                        <span class="text-[10px] font-bold text-purple-600 uppercase">Interactive</span>
+                        <h4 class="font-bold text-xs text-slate-900 leading-tight">Mastering UI Architecture</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">12 Modules &bull; 4.9 ★</p>
+                    </div>
+                </div>
+
+                <!-- Rec Card 2 -->
+                <div class="snap-card w-[210px] flex-shrink-0 bg-white rounded-xl border border-slate-200/60 p-2">
+                    <div class="h-[110px] rounded-lg overflow-hidden mb-2">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=500&q=80" alt="Build Apps" class="w-full h-full object-cover">
+                    </div>
+                    <div class="px-1">
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase">Development</span>
+                        <h4 class="font-bold text-xs text-slate-900 leading-tight">Build Mobile Apps with React</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">18 Modules &bull; 4.8 ★</p>
+                    </div>
+                </div>
+
+                <!-- Rec Card 3 -->
+                <div class="snap-card w-[210px] flex-shrink-0 bg-white rounded-xl border border-slate-200/60 p-2">
+                    <div class="h-[110px] rounded-lg overflow-hidden mb-2">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=500&q=80" alt="Team Workflow" class="w-full h-full object-cover">
+                    </div>
+                    <div class="px-1">
+                        <span class="text-[10px] font-bold text-amber-600 uppercase">Leadership</span>
+                        <h4 class="font-bold text-xs text-slate-900 leading-tight">Remote Team Leadership</h4>
+                        <p class="text-[11px] text-slate-400 mt-1">8 Modules &bull; 5.0 ★</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sticky Floating Bottom Navigation Bar -->
+        <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-1.75rem)] max-w-[402px] bg-white border border-slate-200/80 rounded-2xl p-1.5 flex justify-between items-center z-50">
+            <!-- Active Home Tab -->
+            <button data-tab="home" class="nav-item flex items-center gap-2 bg-slate-950 text-white px-4 py-2.5 rounded-xl transition-all active:scale-95">
+                <i data-lucide="home" class="w-4 h-4"></i>
+                <span class="font-bold text-xs">Home</span>
+            </button>
+            
+            <!-- Inactive Tabs -->
+            <button data-tab="courses" class="nav-item w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition-all">
+                <i data-lucide="graduation-cap" class="w-4.5 h-4.5"></i>
+            </button>
+            
+            <button data-tab="live" class="nav-item w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition-all">
+                <i data-lucide="monitor-play" class="w-4.5 h-4.5"></i>
+            </button>
+            
+            <button data-tab="chat" class="nav-item w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition-all">
+                <i data-lucide="message-square" class="w-4.5 h-4.5"></i>
+            </button>
+            
+            <button data-tab="profile" class="nav-item w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition-all">
+                <i data-lucide="user" class="w-4.5 h-4.5"></i>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Production App Logic -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // 1. Dynamic Featured Carousel Indicator Sync
+        const carousel = document.getElementById('featuredCarousel');
+        const dots = document.querySelectorAll('.dot-btn');
+        const cardWidth = 240 + 12; // Card width + gap (240px + 12px)
+
+        if (carousel && dots.length > 0) {
+            // Scroll Sync Event
+            carousel.addEventListener('scroll', () => {
+                const scrollPosition = carousel.scrollLeft;
+                const activeIndex = Math.min(
+                    dots.length - 1,
+                    Math.max(0, Math.round(scrollPosition / cardWidth))
+                );
+
+                dots.forEach((dot, index) => {
+                    if (index === activeIndex) {
+                        dot.classList.remove('bg-slate-300', 'w-1.5');
+                        dot.classList.add('bg-purple-600', 'w-5');
+                    } else {
+                        dot.classList.remove('bg-purple-600', 'w-5');
+                        dot.classList.add('bg-slate-300', 'w-1.5');
+                    }
+                });
+            }, { passive: true });
+
+            // Click Dot to Scroll Handler
+            dots.forEach((dot) => {
+                dot.addEventListener('click', (e) => {
+                    const idx = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+                    carousel.scrollTo({
+                        left: idx * cardWidth,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        }
+
+        // 2. Mouse Drag Scrolling Handler (for Desktop testing)
+        const draggableSliders = document.querySelectorAll('.draggable-carousel');
+        draggableSliders.forEach(slider => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            let hasDragged = false;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                hasDragged = false;
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => { isDown = false; });
+            slider.addEventListener('mouseup', () => { isDown = false; });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                if (Math.abs(walk) > 5) hasDragged = true;
+                slider.scrollLeft = scrollLeft - walk;
+            });
+
+            slider.addEventListener('click', (e) => {
+                if (hasDragged) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            });
+        });
+
+        // 3. Category Filter Pill Active State Switcher
+        const categoryPills = document.querySelectorAll('.cat-pill');
+        categoryPills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                categoryPills.forEach(p => {
+                    p.classList.remove('bg-slate-900', 'text-white');
+                    p.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200/80');
+                    const icon = p.querySelector('i');
+                    if(icon) icon.classList.replace('text-purple-600', 'text-slate-400');
+                });
+                pill.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200/80');
+                pill.classList.add('bg-slate-900', 'text-white');
+                const activeIcon = pill.querySelector('i');
+                if(activeIcon) activeIcon.classList.replace('text-slate-400', 'text-purple-600');
+            });
+        });
+
+        // 4. Bottom Nav Active State Switcher
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                navItems.forEach(n => {
+                    n.className = 'nav-item w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 active:scale-95 transition-all';
+                    const span = n.querySelector('span');
+                    if (span) span.remove();
+                });
+                
+                item.className = 'nav-item flex items-center gap-2 bg-slate-950 text-white px-4 py-2.5 rounded-xl transition-all active:scale-95';
+                const tabName = item.getAttribute('data-tab');
+                const label = document.createElement('span');
+                label.className = 'font-bold text-xs capitalize';
+                label.textContent = tabName;
+                item.appendChild(label);
+            });
+        });
+
+        // 5. Lightweight Fast Scroll Reveal Observer
+        const observerOptions = { threshold: 0.05, rootMargin: '0px 0px -20px 0px' };
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-item').forEach(el => revealObserver.observe(el));
+    </script>
+</body>
+</html>
